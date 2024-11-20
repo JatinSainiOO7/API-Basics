@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joke Generator with Sidebar</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            width: 250px;
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, color 0.3s;
+            overflow: auto;
+            /* Enable vertical scrolling when content overflows */
+            overflow-x: hidden;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .sidebar h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            transition: color 0.3s;
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+            scroll-behavior: smooth;
+        }
+
+        /* Sidebar styling */
+
+        .search-bar input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 2px solid #007bff;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .search-bar input:focus {
+            border-color: #0056b3;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .category-list {
+            margin-top: 20px;
+        }
+
+        .category-list button {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            margin: 10px 0;
+            color: #007bff;
+            background-color: white;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s, transform 0.3s, box-shadow 0.3s;
+        }
+
+        .category-list button:hover {
+            background-color: #007bff;
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Glowing effect */
+        .glowing {
+            box-shadow: 0 0 10px 3px #007bff;
+            border-color: #007bff;
+        }
+
+        /* Main content styling */
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        .joke-box {
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 600px;
+            font-size: 1.5rem;
+            color: #333;
+            border-left: 4px solid #007bff;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+        .joke-box:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Update Joke Button styling */
+        .update-joke-button {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        }
+
+        .update-joke-button:hover {
+            background-color: #0056b3;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Theme button styling */
+        .theme-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: #007bff;
+            cursor: pointer;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .theme-button:hover {
+            color: #0056b3;
+            transform: rotate(15deg);
+        }
+
+        /* Dark Theme Styles */
+        .dark-theme {
+            background-color: #333;
+            color: white;
+        }
+
+        .dark-theme .sidebar {
+            background-color: #444;
+        }
+
+        .dark-theme .main-content {
+            background-color: #222;
+        }
+
+        .dark-theme .joke-box {
+            background-color: #555;
+            color: white;
+            border-color: #777;
+        }
+
+        .dark-theme .category-list button {
+            background-color: #555;
+            color: white;
+        }
+
+        .dark-theme .category-list button:hover {
+            background-color: #666;
+        }
+
+        .add-category-button {
+            margin-top: 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.2rem;
+            display: none;
+            transition: background-color 0.3s;
+        }
+
+        .add-category-button:hover {
+            background-color: #218838;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                box-shadow: none;
+                padding: 10px;
+            }
+
+            .main-content {
+                padding: 10px;
+                text-align: center;
+            }
+
+            .category-list button {
+                font-size: 1rem;
+                padding: 10px;
+            }
+
+            .joke-box {
+                max-width: 100%;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Theme button (icon) -->
+    <button class="theme-button" onclick="toggleTheme()">
+        <i id="theme-icon" class="fas fa-sun"></i> <!-- Default icon: Sun -->
+    </button>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Categories</h2>
+        <!-- Search bar -->
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Search for a category...">
+        </div>
+        <!-- Category buttons -->
+        <div class="category-list" id="category-list">
+            <button onclick="selectCategory('Programming')" id="Programming">Programming</button>
+            <button onclick="selectCategory('Misc')" id="Misc">Miscellaneous</button>
+            <button onclick="selectCategory('Dark')" id="Dark">Dark Humor</button>
+            <button onclick="selectCategory('Pun')" id="Pun">Puns</button>
+            <button onclick="selectCategory('Spooky')" id="Spooky">Spooky</button>
+            <button onclick="selectCategory('Christmas')" id="Christmas">Christmas</button>
+            <button onclick="selectCategory('Animal')" id="Animal">Animal</button>
+            <button onclick="selectCategory('Tech')" id="Tech">Tech</button>
+            <button onclick="selectCategory('Sports')" id="Sports">Sports</button>
+        </div>
+        <!-- Add Category Button -->
+        <button id="add-category-btn" class="add-category-button" onclick="addCategory()">Add Category</button>
+    </div>
+
+    <!-- Main content -->
+    <div class="main-content">
+        <h1>Random Joke Generator</h1>
+        <div class="joke-box" id="joke-container">Type a category in the search bar or click a button to see a joke!
+        </div>
+        <!-- Update Joke button -->
+        <button class="update-joke-button" onclick="updateJoke()">Update Joke</button>
+    </div>
+
+    <script>
+        let currentCategory = '';
+        let allCategories = ['Programming', 'Misc', 'Dark', 'Pun', 'Spooky', 'Christmas', 'Animal', 'Tech', 'Sports'];
+
+        // Function to fetch a joke based on the category
+        async function fetchJoke(category) {
+            try {
+                const response = await fetch(`https://v2.jokeapi.dev/joke/${category}?type=single`);
+                if (!response.ok) throw new Error("Failed to fetch joke.");
+
+                const data = await response.json();
+                document.getElementById('joke-container').textContent = data.joke || `No jokes found in the ${category} category!`;
+            } catch (error) {
+                console.error("Error fetching joke:", error);
+                document.getElementById('joke-container').textContent = "Oops! Could not fetch a joke. Please try again.";
+            }
+        }
+
+        // Select Category & Add Glowing Effect
+        function selectCategory(category) {
+            // Remove glow from all buttons
+            const buttons = document.querySelectorAll('.category-list button');
+            buttons.forEach(button => button.classList.remove('glowing'));
+
+            // Add glow to selected button
+            const selectedButton = document.getElementById(category);
+            selectedButton.classList.add('glowing');
+
+            currentCategory = category;  // Set the current category
+            fetchJoke(category);         // Fetch a joke for the selected category
+        }
+
+        // Update joke button
+        function updateJoke() {
+            if (currentCategory) {
+                fetchJoke(currentCategory); // Fetch a new joke for the current category
+            }
+        }
+
+        // Search input event listener
+        document.getElementById('search-input').addEventListener('input', function (e) {
+            const query = e.target.value.toLowerCase();
+            const categoryButtons = document.querySelectorAll('.category-list button');
+
+            let matchFound = false;
+            categoryButtons.forEach(button => {
+                const categoryName = button.textContent.toLowerCase();
+                if (categoryName.includes(query)) {
+                    button.style.display = 'block';
+                    matchFound = true;
+                } else {
+                    button.style.display = 'none';
+                }
+            });
+
+            // Show Add Category button if no match is found
+            document.getElementById('add-category-btn').style.display = matchFound ? 'none' : 'block';
+        });
+
+        // Add new category to the list
+        function addCategory() {
+            const newCategory = document.getElementById('search-input').value.trim();
+            if (newCategory && !allCategories.includes(newCategory)) {
+                allCategories.push(newCategory);
+                const newButton = document.createElement('button');
+                newButton.textContent = newCategory;
+                newButton.onclick = () => selectCategory(newCategory);
+                document.getElementById('category-list').appendChild(newButton);
+                selectCategory(newCategory);  // Automatically select the new category
+                document.getElementById('search-input').value = '';  // Clear the search input
+                document.getElementById('add-category-btn').style.display = 'none';
+            }
+        }
+
+        // Theme toggle function
+        function toggleTheme() {
+            const body = document.body;
+            body.classList.toggle('dark-theme');
+            const themeIcon = document.getElementById('theme-icon');
+            themeIcon.classList.toggle('fa-sun');
+            themeIcon.classList.toggle('fa-moon');
+        }
+    </script>
+</body>
+
+</html>
